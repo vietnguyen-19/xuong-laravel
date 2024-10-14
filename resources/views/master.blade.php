@@ -15,8 +15,9 @@
 <body>
     <header>
         <nav class="nav justify-content-center  ">
-            <a class="nav-link active" href="#" aria-current="page">welcome</a>
+            <a class="nav-link active" href="/" aria-current="page">home</a>
             <a class="nav-link" href="{{ route('customers.index') }}">quản lý khách hàng</a>
+            <a class="nav-link" href="{{ route('employees.index') }}">quản lý nhân viên</a>
 
         </nav>
 
@@ -27,7 +28,7 @@
 
     </main>
     <footer>
-        <p class="text-center">hehe</p>
+        <p class="text-center">Nguyễn Quốc Việt</p>
     </footer>
     <!-- Bootstrap JavaScript Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
