@@ -1,8 +1,13 @@
 <?php
 
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\FinancialReportController;
+use App\Http\Controllers\MovieController;
 use App\Http\Middleware\FlagMiddleware;
+use App\Models\Phone;
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
@@ -50,12 +55,56 @@ Route::get('expenses', function () {
     return view('bt2.expense', ['expenses' => $expenses]);
 });
 
+Route::get('/users', function () {
+    $data = User::with('phone')->paginate(5);
+
+    return view('user-list', compact('data'));
+});
+
+Route::get('/phones/{id}', function ($id) {
+    $phone = Phone::with(['user'])->find($id);
+
+    dd($phone->toArray());
+});
+Route::get('/posts/{id}', function ($id) {
+    $post = Post::with('comments')->find($id);
+
+    dd($post->comment->toArray());
+});
+Route::get('/ussers/{id}/add_role', function ($id) {
+    $roles = [1, 5, 6, 8];
+    $user = User::find($id);
+    $user->roles()->attach($roles);
+
+    dd($user->load('roles')->toArray());
+});
+Route::get('/ussers/{id}/remove_role', function ($id) {
+    $rolesRemove = [ 5, 6];
+    $user = User::find($id);
+    $user->roles()->detach($rolesRemove);
+
+    dd($user->load('roles')->toArray());
+});
+Route::get('/ussers/{id}/sync_role', function ($id) {
+    $roles = [3, 6, 9, 10];
+    $user = User::find($id);
+    $user->roles()->sync($roles);
+
+    dd($user->load('roles')->toArray());
+});
+
 
 Route::post('financial', [FinancialReportController::class, 'store'])->name('financial/store');
 
 Route::resource('customers', CustomerController::class);
-Route::delete('customers/{customer}/forceDestroy', [CustomerController::class, 'forceDestroy'])->name('customers.forceDestroy');
+Route::delete('customers/{customer}/forceDestroy', [CustomerController::class, 'forceDestroy'])
+    ->name('customers.forceDestroy');
 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::resource('employees', EmployeeController::class);
+
+
+Route::get('/movies', [MovieController::class, 'index'])->middleware('age.check');
